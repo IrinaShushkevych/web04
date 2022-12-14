@@ -27,21 +27,23 @@ class OwnHTTPRequestHandler(BaseHTTPRequestHandler):
         with open(filepath, 'rb') as f:
             self.wfile.write(f.read())
 
+    def create_all_messages(self):
+        env = Environment(loader=FileSystemLoader( FILE_PATH['html']))
+        template = env.get_template('templallmess.html')
+        with open(os.path.join(*FILE_PATH['storage']), 'rb') as f:
+            messages = json.loads(f.read())
+            print(messages)
+        result = template.render(messages=messages, )
+        with open(os.path.join(FILE_PATH['html'], "allmessage.html"), "w", encoding='utf-8') as f:
+            f.write(result)
+
     def do_GET(self):
         if self.path == '/':
             self.send_html('index.html', 200)
         elif self.path == '/message':
             self.send_html('message.html', 200)
         elif self.path == '/messages':
-            print(os.getcwd())
-            env = Environment(loader=FileSystemLoader( FILE_PATH['html']))
-            template = env.get_template('templallmess.html')
-            with open(os.path.join(*FILE_PATH['storage']), 'rb') as f:
-                messages = json.loads(f.read())
-                print(messages)
-            result = template.render(messages=messages, )
-            with open(os.path.join(FILE_PATH['html'], "allmessage.html"), "w", encoding='utf-8') as f:
-                f.write(result)
+            self.create_all_messages()
             self.send_html('allmessage.html', 200)
         else:
             if os.path.exists(os.path.join(FILE_PATH['static'], self.path[1:])):
