@@ -32,7 +32,6 @@ class OwnHTTPRequestHandler(BaseHTTPRequestHandler):
         template = env.get_template('templallmess.html')
         with open(os.path.join(*FILE_PATH['storage']), 'rb') as f:
             messages = json.loads(f.read())
-            print(messages)
         result = template.render(messages=messages, )
         with open(os.path.join(FILE_PATH['html'], "allmessage.html"), "w", encoding='utf-8') as f:
             f.write(result)
